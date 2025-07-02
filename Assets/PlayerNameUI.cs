@@ -14,6 +14,13 @@ public class PlayerNameUI : MonoBehaviour
 
     private void Start()
     {
+        // Deactivate all listed objects at start
+        foreach (GameObject obj in objectsToActivate)
+        {
+            if (obj != null)
+                obj.SetActive(false);
+        }
+
         if (PlayerPrefs.HasKey("PlayerName"))
         {
             playerName = PlayerPrefs.GetString("PlayerName");

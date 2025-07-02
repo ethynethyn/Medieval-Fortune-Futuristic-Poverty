@@ -8,9 +8,13 @@ public class SettingsApplier : MonoBehaviour
     public CinemachineVirtualCamera virtualCamera;
     public AudioMixer audioMixer;
     public FirstPersonController controller;
+    public LayerMask pickupLayer; // Set to only include the "Pickup" layer
 
     void Awake()
     {
+        LoadPlayerPosition();
+        LoadPickupPositions();
+
         // Apply FOV
         float savedFOV = PlayerPrefs.GetFloat("CameraFOV", 80f);
         if (virtualCamera != null)
@@ -36,5 +40,36 @@ public class SettingsApplier : MonoBehaviour
         float savedSensitivity = PlayerPrefs.GetFloat("MouseSensitivity", 1f);
         if (controller != null)
             controller.RotationSpeed = savedSensitivity;
+    }
+
+    void LoadPlayerPosition()
+    {
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player && PlayerPrefs.HasKey("PlayerPosX"))
+        {
+            float x = PlayerPrefs.GetFloat("PlayerPosX");
+            float y = PlayerPrefs.GetFloat("PlayerPosY");
+            float z = PlayerPrefs.GetFloat("PlayerPosZ");
+            player.transform.position = new Vector3(x, y, z);
+        }
+    }
+
+    void LoadPickupPositions()
+    {
+        GameObject[] allObjects = FindObjectsOfType<GameObject>();
+        foreach (GameObject obj in allObjects)
+        {
+            if (((1 << obj.layer) & pickupLayer) != 0)
+            {
+                string key = "Pickup_" + obj.name;
+                if (PlayerPrefs.HasKey(key + "_X"))
+                {
+                    float x = PlayerPrefs.GetFloat(key + "_X");
+                    float y = PlayerPrefs.GetFloat(key + "_Y");
+                    float z = PlayerPrefs.GetFloat(key + "_Z");
+                    obj.transform.position = new Vector3(x, y, z);
+                }
+            }
+        }
     }
 }

@@ -7,11 +7,12 @@ TagManager:
   - CinemachineTarget
   - Item
   - Concrete
+  - Pickup
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Pickup
   - Water
   - UI
   - 
