@@ -7197,7 +7197,7 @@ MonoBehaviour:
   starterAssetsInputs: {fileID: 135756641613574975}
   firstPersonController: {fileID: 135756641613574981}
   pickupRange: 2.5
-  moveForce: 1100
+  moveForce: 1250
   inspectRotateSpeed: 1
   inspectLightObject: {fileID: 0}
 --- !u!1 &1008769799
