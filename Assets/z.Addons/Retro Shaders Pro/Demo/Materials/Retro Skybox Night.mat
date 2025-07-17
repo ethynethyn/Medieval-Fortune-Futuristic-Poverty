@@ -79,8 +79,8 @@ Material:
     - _Cloud_Sizes: {r: 5, g: 25, b: 0, a: 0}
     - _Cloud_Velocity: {r: -0.005, g: -0.01, b: 0, a: 0}
     - _Cloud_Visibility_Thresholds: {r: 0.02, g: 0.3, b: 0, a: 0}
-    - _Ground_Color: {r: 0.13216446, g: 0.13843893, b: 0.16981131, a: 1}
-    - _Sky_Color: {r: 1, g: 0.14288346, b: 0, a: 1}
+    - _Ground_Color: {r: 0.09142073, g: 0.3477075, b: 0.5681319, a: 1}
+    - _Sky_Color: {r: 0.35617593, g: 0.41566235, b: 0.52172565, a: 1}
     - _Star_Color: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
