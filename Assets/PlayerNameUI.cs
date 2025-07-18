@@ -10,11 +10,18 @@ public class PlayerNameUI : MonoBehaviour
     [Header("Objects to Activate After Name Entry")]
     public List<GameObject> objectsToActivate;
 
+    [Header("Character Creator Parent Object")]
+    public GameObject characterCreatorObject;
+
     private string playerName;
 
     private void Start()
     {
-        // Deactivate all listed objects at start
+        // Unlock the cursor at start
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+        // Deactivate all gameplay-related objects at start
         foreach (GameObject obj in objectsToActivate)
         {
             if (obj != null)
@@ -23,23 +30,39 @@ public class PlayerNameUI : MonoBehaviour
 
         if (PlayerPrefs.HasKey("PlayerName"))
         {
+            // Load player name
             playerName = PlayerPrefs.GetString("PlayerName");
             displayText.text = "Welcome back, " + playerName + "!";
-            nameInputField.gameObject.SetActive(false);
 
+            // Hide input and character creator UI
+            if (nameInputField != null)
+                nameInputField.gameObject.SetActive(false);
+
+            if (characterCreatorObject != null)
+                characterCreatorObject.SetActive(false);
+
+            // Load saved facial feature states
+            LoadFacialFeatures();
+
+            // Continue with game
             ActivateObjects();
             LockCursor();
         }
         else
         {
+            // Set up name input listener
             nameInputField.onSubmit.AddListener(SubmitName);
-            nameInputField.ActivateInputField(); // Initial focus
+            nameInputField.ActivateInputField();
+
+            // Show character creator at start
+            if (characterCreatorObject != null)
+                characterCreatorObject.SetActive(true);
         }
     }
 
     private void Update()
     {
-        // Keep the input field selected while it's active
+        // Keep the input field focused while active
         if (nameInputField != null && nameInputField.gameObject.activeInHierarchy && !nameInputField.isFocused)
         {
             nameInputField.ActivateInputField();
@@ -51,12 +74,24 @@ public class PlayerNameUI : MonoBehaviour
         if (!string.IsNullOrWhiteSpace(submittedText))
         {
             playerName = submittedText.Trim();
+
+            // Save name
             PlayerPrefs.SetString("PlayerName", playerName);
             PlayerPrefs.Save();
 
             displayText.text = "Welcome, " + playerName + "!";
-            nameInputField.gameObject.SetActive(false);
 
+            // Hide UI elements
+            if (nameInputField != null)
+                nameInputField.gameObject.SetActive(false);
+
+            if (characterCreatorObject != null)
+                characterCreatorObject.SetActive(false);
+
+            // Save facial features
+            SaveFacialFeatures();
+
+            // Activate game objects
             ActivateObjects();
             LockCursor();
         }
@@ -75,5 +110,41 @@ public class PlayerNameUI : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+    }
+
+    private void SaveFacialFeatures()
+    {
+        if (characterCreatorObject == null) return;
+
+        Transform[] allChildren = characterCreatorObject.GetComponentsInChildren<Transform>(true);
+
+        foreach (Transform part in allChildren)
+        {
+            if (part == characterCreatorObject.transform) continue; // skip root object
+
+            string key = "FacePart_" + part.name;
+            PlayerPrefs.SetInt(key, part.gameObject.activeSelf ? 1 : 0);
+        }
+
+        PlayerPrefs.Save();
+    }
+
+    private void LoadFacialFeatures()
+    {
+        if (characterCreatorObject == null) return;
+
+        Transform[] allChildren = characterCreatorObject.GetComponentsInChildren<Transform>(true);
+
+        foreach (Transform part in allChildren)
+        {
+            if (part == characterCreatorObject.transform) continue; // skip root object
+
+            string key = "FacePart_" + part.name;
+            if (PlayerPrefs.HasKey(key))
+            {
+                bool isActive = PlayerPrefs.GetInt(key) == 1;
+                part.gameObject.SetActive(isActive);
+            }
+        }
     }
 }
